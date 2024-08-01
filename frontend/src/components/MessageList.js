@@ -3,9 +3,11 @@ import React from 'react';
 
 const MessageList = ({ messages }) => {
   return (
-    <ul>
+    <ul className="message-list">
       {messages.map((msg, index) => (
-        <li key={index}>{msg.message}</li>
+        <li key={index} className="message">
+          <strong>{msg.sender}</strong>: {msg.text}
+        </li>
       ))}
     </ul>
   );

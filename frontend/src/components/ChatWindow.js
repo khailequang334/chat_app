@@ -8,24 +8,49 @@ const ChatWindow = () => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    // Connect to WebSocket server
+    // Establish WebSocket connection
     const ws = new WebSocket('ws://localhost:8080/ws');
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      setMessages((prevMessages) => [...prevMessages, message]);
+    
+    ws.onopen = () => {
+      console.log('WebSocket connection established');
     };
+
+    ws.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        setMessages((prevMessages) => [...prevMessages, message]);
+      } catch (error) {
+        console.error('Error parsing message:', error);
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
+
     setSocket(ws);
-    return () => ws.close(); // Clean up on component unmount
+
+    // Cleanup on component unmount
+    return () => {
+      ws.close();
+      console.log('WebSocket connection closed from cleanup');
+    };
   }, []);
 
   const sendMessage = (message) => {
     if (socket) {
-      socket.send(JSON.stringify({ message }));
+      const messageData = JSON.stringify(message);
+      console.log('Sending message:', messageData);
+      socket.send(messageData);
     }
   };
 
   return (
-    <div>
+    <div className="chat-window">
       <MessageList messages={messages} />
       <MessageInput sendMessage={sendMessage} />
     </div>

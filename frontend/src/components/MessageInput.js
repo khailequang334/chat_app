@@ -6,17 +6,20 @@ const MessageInput = ({ sendMessage }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    sendMessage(message);
-    setMessage('');
+    if (message.trim()) {
+      sendMessage({ sender: 'User', text: message }); // Replace 'User' with dynamic user info if available
+      setMessage('');
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="message-input">
       <input
         type="text"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         placeholder="Type a message..."
+        required
       />
       <button type="submit">Send</button>
     </form>
